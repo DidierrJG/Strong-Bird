@@ -1,10 +1,10 @@
 import pygame
 from variables import WINDOW_WIDTH, WINDOW_HEIGHT
-import math
 import random
 from body_capture import BodyCapture
 from bird import Bird
 from pipe import Pipe
+from button import Button
 import cv2 as cv
 
 pygame.init()
@@ -21,6 +21,11 @@ def draw_text(text, font, text_color, x, y):
 
 #Setup body_capture
 body = BodyCapture()
+
+#Restart button
+button_image = pygame.image.load("assets/images/buttons/reset_1.png")
+button_image = pygame.transform.scale(button_image, (150, 150))
+restart_button = Button(WINDOW_WIDTH // 2 - (button_image.get_width() // 2), WINDOW_HEIGHT // 2 - (button_image.get_height() // 2), button_image, window, body)
 
 #Load bird
 bird_group = pygame.sprite.Group()
@@ -39,7 +44,7 @@ background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDO
 #Load ground
 ground_image = pygame.image.load("assets/images/environment/ground.png")
 ground_scroll = 0
-    
+
 #Frame rate control
 clock = pygame.time.Clock()
 
@@ -49,7 +54,13 @@ flying = False
 pass_pipe = False
 run = True
 score = 0
-elevations = 0
+
+#Restart game
+def restart_game():
+    pipe_group.empty()
+    bird.rect.x = 100
+    bird.rect.y = WINDOW_HEIGHT // 2
+    score = 0
 
 while run == True:
     clock.tick(30)
@@ -109,7 +120,12 @@ while run == True:
             ground_scroll = 0
 
         pipe_group.update()
-
+    
+    #Check button status
+    if game_over == True:
+        if restart_button.draw() == True:
+            game_over = False
+            restart_game()
 
     #Check workout
     frame = body.update_detection()
@@ -118,9 +134,6 @@ while run == True:
 
     if body.in_exercise == True and flying == False and game_over == False:
         flying = True
-        elevations += 1
-
-    draw_text("ELEVATIONS: " + str(elevations), flappyBirdRegular, (0, 0, 0), 0, (WINDOW_HEIGHT - 60))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

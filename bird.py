@@ -16,7 +16,6 @@ class Bird(pygame.sprite.Sprite):
         self.rect.center = [x, y]
         self.speed = 0
         self.clicked = False
-        #Setup body
         self.body = body
 
     def update(self, flying, game_over):
