@@ -32,7 +32,7 @@
 </ul>
 
 <h2>
-  Instalacion
+  Instalación
 </h2>
 
 <p>
